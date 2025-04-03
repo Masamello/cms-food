@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Apr 02, 2025 at 08:04 PM
+-- Generation Time: Apr 03, 2025 at 07:48 PM
 -- Server version: 8.0.39
 -- PHP Version: 8.2.27
 
@@ -48,12 +48,31 @@ CREATE TABLE `reservation_tb` (
   `ReservationId` int NOT NULL,
   `CustomerId` int NOT NULL,
   `TableId` int NOT NULL,
-  `ReservationDate` date NOT NULL,
-  `ReservationTime` time NOT NULL,
+  `Date` datetime NOT NULL,
   `PartySize` int NOT NULL,
   `SpecialRequests` text COLLATE utf8mb4_general_ci NOT NULL,
   `Status` enum('Pending','Confirmed','Cancelled','') COLLATE utf8mb4_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `roles_tb`
+--
+
+CREATE TABLE `roles_tb` (
+  `RoleId` int NOT NULL,
+  `name` varchar(50) COLLATE utf8mb4_general_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `roles_tb`
+--
+
+INSERT INTO `roles_tb` (`RoleId`, `name`) VALUES
+(1, 'Admin'),
+(2, 'Editor'),
+(3, 'Viewer');
 
 -- --------------------------------------------------------
 
@@ -82,7 +101,8 @@ CREATE TABLE `user_tb` (
   `Password` varchar(300) COLLATE utf8mb4_general_ci NOT NULL,
   `Phone` varchar(11) COLLATE utf8mb4_general_ci NOT NULL,
   `Email` varchar(70) COLLATE utf8mb4_general_ci NOT NULL,
-  `Activate` tinyint NOT NULL
+  `Activate` tinyint NOT NULL,
+  `RoleId` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -101,7 +121,14 @@ ALTER TABLE `audit_tb`
 ALTER TABLE `reservation_tb`
   ADD PRIMARY KEY (`ReservationId`),
   ADD KEY `FK_reservation_tb_user_id` (`CustomerId`),
-  ADD KEY `FK_reservation_tb_table_id` (`TableId`);
+  ADD KEY `FK_reservation_tb_table_id` (`TableId`),
+  ADD KEY `ReservationDate` (`Date`);
+
+--
+-- Indexes for table `roles_tb`
+--
+ALTER TABLE `roles_tb`
+  ADD PRIMARY KEY (`RoleId`);
 
 --
 -- Indexes for table `table_tb`
@@ -115,7 +142,8 @@ ALTER TABLE `table_tb`
 --
 ALTER TABLE `user_tb`
   ADD PRIMARY KEY (`UserId`),
-  ADD UNIQUE KEY `Email` (`Email`);
+  ADD UNIQUE KEY `Email` (`Email`),
+  ADD KEY `FK_role_tb_role_id` (`RoleId`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -134,6 +162,12 @@ ALTER TABLE `reservation_tb`
   MODIFY `ReservationId` int NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `roles_tb`
+--
+ALTER TABLE `roles_tb`
+  MODIFY `RoleId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
 -- AUTO_INCREMENT for table `table_tb`
 --
 ALTER TABLE `table_tb`
@@ -143,7 +177,7 @@ ALTER TABLE `table_tb`
 -- AUTO_INCREMENT for table `user_tb`
 --
 ALTER TABLE `user_tb`
-  MODIFY `UserId` int NOT NULL AUTO_INCREMENT;
+  MODIFY `UserId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- Constraints for dumped tables
@@ -155,6 +189,12 @@ ALTER TABLE `user_tb`
 ALTER TABLE `reservation_tb`
   ADD CONSTRAINT `FK_reservation_tb_table_id` FOREIGN KEY (`TableId`) REFERENCES `table_tb` (`TableId`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   ADD CONSTRAINT `FK_reservation_tb_user_id` FOREIGN KEY (`CustomerId`) REFERENCES `user_tb` (`UserId`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+--
+-- Constraints for table `user_tb`
+--
+ALTER TABLE `user_tb`
+  ADD CONSTRAINT `FK_role_tb_role_id` FOREIGN KEY (`RoleId`) REFERENCES `roles_tb` (`RoleId`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
