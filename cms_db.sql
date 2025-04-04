@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Apr 03, 2025 at 07:48 PM
+-- Generation Time: Apr 04, 2025 at 02:35 AM
 -- Server version: 8.0.39
 -- PHP Version: 8.2.27
 
@@ -72,7 +72,8 @@ CREATE TABLE `roles_tb` (
 INSERT INTO `roles_tb` (`RoleId`, `name`) VALUES
 (1, 'Admin'),
 (2, 'Editor'),
-(3, 'Viewer');
+(3, 'Viewer'),
+(4, 'Customer');
 
 -- --------------------------------------------------------
 
@@ -87,6 +88,13 @@ CREATE TABLE `table_tb` (
   `Location` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
   `Status` enum('Available','Reserved','Occupied','Out of Service') COLLATE utf8mb4_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `table_tb`
+--
+
+INSERT INTO `table_tb` (`TableId`, `TableNumber`, `Capacity`, `Location`, `Status`) VALUES
+(1, 'A1', 2, 'Main Hall', 'Available');
 
 -- --------------------------------------------------------
 
@@ -104,6 +112,13 @@ CREATE TABLE `user_tb` (
   `Activate` tinyint NOT NULL,
   `RoleId` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `user_tb`
+--
+
+INSERT INTO `user_tb` (`UserId`, `FirstName`, `LastName`, `Password`, `Phone`, `Email`, `Activate`, `RoleId`) VALUES
+(12, 'Kaho', 'Uchiyama', '$2y$12$mTPNU9YH8eytQjbgpM5zy.N/ZtnT7b3Rhb4xPMguWYbYAEmxkRzIu', '4444444', 'kaho@gmail.com', 1, 1);
 
 --
 -- Indexes for dumped tables
@@ -165,19 +180,19 @@ ALTER TABLE `reservation_tb`
 -- AUTO_INCREMENT for table `roles_tb`
 --
 ALTER TABLE `roles_tb`
-  MODIFY `RoleId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `RoleId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `table_tb`
 --
 ALTER TABLE `table_tb`
-  MODIFY `TableId` int NOT NULL AUTO_INCREMENT;
+  MODIFY `TableId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `user_tb`
 --
 ALTER TABLE `user_tb`
-  MODIFY `UserId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `UserId` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- Constraints for dumped tables

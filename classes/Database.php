@@ -1,14 +1,11 @@
 <?php
+  require "./webConfig.php";
   class Database {
-    private $dbname = "cms_db";
-    private $servername = "localhost";
-    private $username = "root";
-    private $password = "mysql";
     public $conn;
 
     public function __construct() {
       try {
-        $this->conn = new mysqli($this->servername, $this->username, $this->password, $this->dbname);
+        $this->conn = new mysqli(DB_SERVER_NAME, DB_USERNAME, DB_PASSWORD, DB_NAME);
         if($this->conn->connect_error) {
           die("Connection failied: " . $this->conn->connect_error);
         }

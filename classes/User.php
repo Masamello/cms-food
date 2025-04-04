@@ -23,14 +23,15 @@
       $this->db->conn->close();
     }
 
-    public function updateUser() {
+    public function updateUser($id) {
       $password = $this->hashPassword("7891011");
       $sql = "UPDATE user_tb 
               SET FirstName='Kaho', 
                   LastName='Uchiyama', 
                   Password='$password',
                   Phone='4444444',
-                  Email='kaho@gmail.com'";
+                  Email='kaho@gmail.com'
+                  WHERE UserId=$id";
       
       if($this->db->conn->query($sql) === TRUE) {
         echo "User updated successfully!";
