@@ -1,6 +1,5 @@
 <?php
-  require_once "classes/User.php";
+require_once "classes/Reservation.php";
 
-  $user = new User();
-  $user->updateUser();
-?>
+$user = new Reservation();
+$user->addReservation();
