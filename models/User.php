@@ -2,7 +2,28 @@
   require_once "Model.php";
   class User extends Model {
 
-    public function login() {}
+    public function login($email, $password) {
+      try {
+        $sql = "SELECT UserId, CONCAT_WS(' ', FirstName, LastName) AS FullName, Password
+                FROM user_tb
+                WHERE Email='$email'";
+        if($result = $this->db->query($sql)) {
+          $data = $result->fetch_assoc();
+          if(count($data) > 0 && password_verify($password, $data['Password'])) {
+            if(session_status() === PHP_SESSION_NONE) {
+              session_start();
+            }
+            $_SESSION['userId'] = $data['UserId'];
+            $_SESSION['userFullName'] = $data['FullName'];
+            $_SESSION['logged'] = true;
+          } else {
+            echo "Provided email or login wrong.";
+          }
+        }
+      } catch(Exception $e) {
+        echo "Error: " . $e->getMessage();
+      }
+    }
 
     public function getAllUsers() {
       try {
@@ -37,7 +58,7 @@
       int $roleId
     ) {
       try {
-        $password = $this->hashPassword($password);
+        $password = $this->createHashPassword($password);
         $sql = "INSERT INTO user_tb (FirstName, LastName, Password, Phone, Email, RoleId, Activate) 
                 VALUES ('$firstName', '$lastName', '$password', '$phone', '$email', $roleId, 1)";
         if($this->db->query($sql)) {
@@ -64,7 +85,7 @@
           if($result = $this->db->query($sql)) {
             $isActivate = $result->fetch_assoc();
             if(isset($isActivate) && $isActivate['Activate']) {
-              $password = $this->hashPassword($password);
+              $password = $this->createHashPassword($password);
               $sql = "UPDATE user_tb 
                       SET FirstName='$firstName', 
                           LastName='$lastName', 
@@ -105,7 +126,7 @@
       }
     }
 
-    private function hashPassword(string $password): string {
+    private function createHashPassword(string $password): string {
       $options = [
         'cost' => 12
       ];

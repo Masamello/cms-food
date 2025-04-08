@@ -4,10 +4,10 @@
     
     public function getAllReservations() {
       try {
-        $sql = "SELECT r.ReservationId, u.FirstName, u.LastName, t.TableNumber, t.Location, r.Date, r.PartySize, r.SpecialRequests, r.Status
+        $sql = "SELECT r.ReservationId, u.FirstName, u.LastName, t.TableNumber, t.Location, r.PartySize, r.SpecialRequests, r.Status
                 FROM reservation_tb AS r
                 INNER JOIN user_tb AS u
-                ON u.UserId = r.ReservationId
+                ON u.UserId = r.CustomerId
                 INNER JOIN table_tb AS t
                 ON t.TableId = r.TableId";
 
@@ -31,7 +31,8 @@
     public function addReservation(
       int $customerId,
       int $tableId,
-      string $date,
+      string $startTime,
+      string $endTime,
       int $partySize,
       string $status,
       string $specialRequests = "No requests",
@@ -42,10 +43,10 @@
          * 1 - check if there is a reservation with same date/hour and status is not confirmed/pending.
          * 2 - check if the table selected have sufficient seats available.
          *  */ 
-        // $reservation = $this->checkReservation($date);
+        // $isReservationAvailable = $this->checkReservation($startTime, $endTime, $partySize, $tableId);
 
-        $sql = "INSERT INTO reservation_tb (CustomerId, TableId, Date, PartySize, SpecialRequests, Status)
-                VALUES ($customerId, $tableId, '$date', $partySize, '$specialRequests', '$status')";        
+        $sql = "INSERT INTO reservation_tb (CustomerId, TableId, StartTime, EndTime, PartySize, SpecialRequests, Status)
+                VALUES ($customerId, $tableId, '$startTime', '$endTime', $partySize, '$specialRequests', '$status')";        
 
         if($this->db->query($sql)) {
           echo "New reservation created successfully!";
@@ -60,7 +61,8 @@
     public function updateReservation(
       int $customerId,
       int $tableId,
-      string $date,
+      string $startTime,
+      string $endTime,
       int $partySize,
       string $status,
       string $specialRequests = "No requests",
@@ -72,12 +74,13 @@
          * 1 - check if there is a reservation with same date/hour and status is not confirmed/pending.
          * 2 - check if the table selected have sufficient seats available.
          *  */ 
-        // $reservation = $this->checkReservation($date);
+        // $reservation = $this->checkReservation($startTime, $endTime, $partySize, $tableId);
 
         $sql = "UPDATE reservation_tb
                 SET CustomerId=$customerId, 
                     TableId=$tableId, 
-                    Date='$date',
+                    StartTime='$startTime',
+                    EndTime='$endTime',
                     PartySize='$partySize',
                     Status='$status',
                     SpecialRequests='$specialRequests'
@@ -107,12 +110,25 @@
       }
     }
 
-    private function checkReservation($date) {
+    private function checkReservation($startTime, $endTime, $partySize, $tableId): bool {
       try {
-        $sql = "SELECT date FROM reservation_tb WHERE date = '$date'";
-        if($result = $this->db->query($sql)) {}
+        $sql = "SELECT date 
+                FROM reservation_tb 
+                WHERE (startTime < '$startTime' AND endTime > '$endTime') AND TableId=$tableId";
+        if($result = $this->db->query($sql)) {
+          $data = $result->fetch_all(MYSQLI_ASSOC);
+          if(count($data) > 0) {
+            echo "Reservation is not available";
+            return false;
+          } else {
+            echo "Reservation is available";
+            return true;
+          } 
+        }
+        return true;
       } catch(Exception $e) {
         echo "Error: " . $e->getMessage();
+        return false;
       }
     }
   }
