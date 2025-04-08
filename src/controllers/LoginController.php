@@ -1,5 +1,9 @@
 <?php 
-  require_once "./models/User.php";
+  namespace App\Controllers;
+
+  use App\Models\User;
+
+  // require_once "./models/User.php";
 
   class LoginController {
     private $user;
@@ -15,7 +19,6 @@
     }
 
     public function logout() {
-      session_unset();
       session_destroy();
     }
   }
