@@ -1,8 +1,44 @@
 <?php
   require "./models/User.php";
   require "./models/Table.php";
+  require "./models/Reservation.php";
   require "./enums/UserStatus.php";
   require "./enums/TableStatus.php";
+  require "./enums/ReservationStatus.php";
+
+  $reservation = new Reservation;
+
+  $reservation->getAllReservations();
+
+  // $data = [
+  //   "customerId" => 12,
+  //   "tableId" => 1,
+  //   "date" => "2025-04-07 13:00:00",
+  //   "partySize" => 6,
+  //   "specialRequests" => "No spicy food and only vegetables.",
+  //   "status" => ReservationStatus::Confirmed->value
+  // ];
+
+  // $reservation->addReservation(
+  //   $data['customerId'],
+  //   $data['tableId'],
+  //   $data['date'],
+  //   $data['partySize'],
+  //   $data['status'],
+  //   $data['specialRequests'],
+  // );
+
+  // $reservation->updateReservation(
+  //   $data['customerId'],
+  //   $data['tableId'],
+  //   $data['date'],
+  //   $data['partySize'],
+  //   $data['status'],
+  //   $data['specialRequests'],
+  //   7
+  // );
+
+  // $reservation->updateReservationStatus(ReservationStatus::Cancelled->value, 7);
 
   // $table = new Table;
   

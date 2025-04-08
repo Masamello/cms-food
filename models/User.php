@@ -1,14 +1,21 @@
 <?php 
   require_once "Model.php";
- class User extends Model {
+  class User extends Model {
+
+    public function login() {}
 
     public function getAllUsers() {
       try {
         $sql = "SELECT * FROM user_tb";
         if($result = $this->db->query($sql)) {
-          echo "<pre>";
-          print_r($result->fetch_all(MYSQLI_ASSOC));
-          echo "</pre>";
+          $data = $result->fetch_all(MYSQLI_ASSOC);
+          if(count($data) > 0) {
+            echo "<pre>";
+            print_r($data);
+            echo "</pre>";
+          } else {
+            echo "No users found.";
+          }
         }
       } catch(Exception $e) {
         echo "Error: " . $e->getMessage();
@@ -43,7 +50,7 @@
         string $firstName, 
         string $lastName, 
         string $password, 
-        string $phone, 
+        string $phone,
         string $email, 
         int $roleId, 
         int $userId,

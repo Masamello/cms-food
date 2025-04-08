@@ -6,9 +6,14 @@
       try {
         $sql = "SELECT * FROM table_tb";
         if($result = $this->db->query($sql)) {
-          echo "<pre>";
-          print_r($result->fetch_all(MYSQLI_ASSOC));
-          echo "</pre>";
+          $data = $result->fetch_all(MYSQLI_ASSOC);
+          if(count($data) > 0) {
+            echo "<pre>";
+            print_r($data);
+            echo "</pre>";
+          } else {
+            echo "No tables found.";
+          }
         }
       } catch(Exception $e) {
         echo "Error: " . $e->getMessage();
