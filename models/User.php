@@ -6,7 +6,11 @@
 
     public function getAllUsers() {
       try {
-        $sql = "SELECT * FROM user_tb";
+        $sql = "SELECT u.userId, u.FirstName, u.LastName, u.Phone, u.Email, u.Activate, r.name AS Role
+                FROM user_tb AS u 
+                INNER JOIN roles_tb AS r
+                WHERE r.RoleId = u.RoleId";
+
         if($result = $this->db->query($sql)) {
           $data = $result->fetch_all(MYSQLI_ASSOC);
           if(count($data) > 0) {

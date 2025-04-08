@@ -4,7 +4,12 @@
     
     public function getAllReservations() {
       try {
-        $sql = "SELECT * FROM reservation_tb";
+        $sql = "SELECT r.ReservationId, u.FirstName, u.LastName, t.TableNumber, t.Location, r.Date, r.PartySize, r.SpecialRequests, r.Status
+                FROM reservation_tb AS r
+                INNER JOIN user_tb AS u
+                ON u.UserId = r.ReservationId
+                INNER JOIN table_tb AS t
+                ON t.TableId = r.TableId";
 
         if($result = $this->db->query($sql)) {
           $data = $result->fetch_all(MYSQLI_ASSOC);
