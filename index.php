@@ -1,6 +1,6 @@
 <?php
-  require_once "classes/User.php";
+  require_once "classes/Table.php";
 
-  $user = new User();
-  $user->updateUser();
+  $table = new Table();
+  $table->addTable();
 ?>
