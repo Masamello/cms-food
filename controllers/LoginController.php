@@ -2,10 +2,22 @@
   require_once "./models/User.php";
 
   class LoginController {
+    private $user;
 
-    public function login() {}
+    public function __construct() {
+      $this->user = new User();
+    }
 
-    public function logout() {}
+    public function login() {
+      if($_POST['email'] && $_POST['password']) {
+        $this->user->login($_POST['email'], $_POST['password']);
+      }
+    }
+
+    public function logout() {
+      session_unset();
+      session_destroy();
+    }
   }
 
 ?>
