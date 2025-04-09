@@ -1,21 +1,20 @@
 <?php
+  session_start();
 
-  use App\Controllers\ReservationController;
-  use Psr\Http\Message\ResponseInterface as Response;
-  use Psr\Http\Message\ServerRequestInterface as Request;
   use Slim\Factory\AppFactory;
 
+  use App\Controllers\LoginController;
   use App\Controllers\UserController;
+  use App\Controllers\ReservationController;
   use App\Controllers\TableController;
   
   require __DIR__ . '/vendor/autoload.php';
   
   $app = AppFactory::create();
-  
-  $app->get('/', function (Request $request, Response $response, $args) {
-      $response->getBody()->write("Hello world!");
-      return $response;
-  });
+
+  // Login Routes
+  $app->post('/login', LoginController::class . ':login');
+  $app->post('/logout', LoginController::class . ':logout');
 
   // User Routes
   $app->get('/users', UserController::class . ':showUsers');

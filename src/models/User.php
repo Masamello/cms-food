@@ -2,6 +2,7 @@
   namespace App\Models;
 
   use App\Models\Model;
+  use Exception;
 
   class User extends Model {
 
@@ -12,19 +13,26 @@
                 WHERE Email='$email'";
         if($result = $this->db->query($sql)) {
           $data = $result->fetch_assoc();
-          if(count($data) > 0 && password_verify($password, $data['Password'])) {
+          if($data && password_verify($password, $data['Password'])) {
             if(session_status() === PHP_SESSION_NONE) {
               session_start();
             }
-            $_SESSION['userId'] = $data['UserId'];
-            $_SESSION['userFullName'] = $data['FullName'];
-            $_SESSION['logged'] = true;
+            $_SESSION['userInfo'] = $data;
+            return ["success" => true, "message" => "User authenticated.", "status" => 200];
           } else {
-            echo "Provided email or login wrong.";
+            throw new Exception("Login failed.", 405);
           }
+        } else {
+          throw new Exception("Login failed.", 405);
         }
       } catch(\Exception $e) {
-        echo "Error: " . $e->getMessage();
+        return [
+          "success" => false,
+          "message" => $e->getMessage(),
+          "status" => $e->getCode()
+        ];
+      } finally {
+        $this->db->close();
       }
     }
 
@@ -34,7 +42,6 @@
                 FROM user_tb AS u 
                 INNER JOIN roles_tb AS r
                 WHERE r.RoleId = u.RoleId";
-
         if($result = $this->db->query($sql)) {
           $data = $result->fetch_all(MYSQLI_ASSOC);
           if(count($data) > 0) {
@@ -128,7 +135,6 @@
         $sql = "UPDATE user_tb
                 SET Activate=$status
                 WHERE UserId=$id";
-
         if($this->db->query($sql)) {
           if($this->db->affected_rows > 0) {
             return [
