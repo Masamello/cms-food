@@ -1,5 +1,7 @@
 <?php 
-  require_once "Model.php";
+  namespace App\Models;
+
+  use App\Models\Model;
   class Reservation extends Model {
     
     public function getAllReservations() {
@@ -14,21 +16,22 @@
         if($result = $this->db->query($sql)) {
           $data = $result->fetch_all(MYSQLI_ASSOC);
           if(count($data) > 0) {
-            echo "<pre>";
-            print_r($data);
-            echo "</pre>";
+            return ["success" => true, "data" => $data];
           } else {
-            echo "No reservations found.";
+            return ["success" => true, "data" => "No reservations found"];
           }
         }
-      } catch(Exception $e) {
-        echo "Error: " . $e->getMessage();
+      } catch(\Exception $e) {
+        return [
+          "success" => false, 
+          "message" => $e->getMessage()
+        ];
       } finally {
         $this->db->close();  
       }
     }
 
-    public function addReservation(
+    public function registerReservation(
       int $customerId,
       int $tableId,
       string $startTime,
@@ -49,10 +52,16 @@
                 VALUES ($customerId, $tableId, '$startTime', '$endTime', $partySize, '$specialRequests', '$status')";        
 
         if($this->db->query($sql)) {
-          echo "New reservation created successfully!";
+          return [
+            "success" => true,
+            "message" => "New reservation created successfully!"
+          ];
         } 
-      } catch(Exception $e) {
-        echo "Error: " . $e->getMessage();
+      } catch(\Exception $e) {
+        return [
+          "success" => false, 
+          "message" => $e->getMessage()
+        ];
       } finally {
         $this->db->close();
       }
@@ -86,10 +95,23 @@
                     SpecialRequests='$specialRequests'
                 WHERE ReservationId=$reservationId";
         if($this->db->query($sql)) {
-          echo "Reservation updated successfully!";
+          if($this->db->affected_rows > 0) {
+            return [
+              "success" => true,
+              "message" => "Reservation updated successfully!"
+            ];
+          } else {
+            return [
+              "success" => false,
+              "message" => "No reservation were updated."
+            ];
+          }
         }
-      } catch(Exception $e) {
-        echo "Error: " . $e->getMessage();
+      } catch(\Exception $e) {
+        return [
+          "success" => false, 
+          "message" => $e->getMessage()
+        ];
       } finally {
         $this->db->close();
       }
@@ -100,17 +122,31 @@
         $sql = "UPDATE reservation_tb
                 SET Status='$status'
                 WHERE ReservationId=$reservationId";
-         if($this->db->query($sql)) {
-          echo "Reservation status updated successfully!";
+        
+        if($this->db->query($sql)) {
+          if($this->db->affected_rows > 0) {
+            return [
+              "success" => true,
+              "message" => "Reservation status updated successfully!"
+            ];
+          } else {
+            return [
+              "success" => false,
+              "message" => "No reservation status were updated."
+            ];
+          }
         }
-      } catch(Exception $e) {
-        echo "Error: " . $e->getMessage();
+      } catch(\Exception $e) {
+        return [
+          "success" => false, 
+          "message" => $e->getMessage()
+        ];
       } finally {
         $this->db->close();
       }
     }
 
-    private function checkReservation($startTime, $endTime, $partySize, $tableId): bool {
+    private function checkReservation($startTime, $endTime, $partySize, $tableId) {
       try {
         $sql = "SELECT date 
                 FROM reservation_tb 
@@ -126,9 +162,11 @@
           } 
         }
         return true;
-      } catch(Exception $e) {
-        echo "Error: " . $e->getMessage();
-        return false;
+      } catch(\Exception $e) {
+        return [
+          "success" => false, 
+          "message" => $e->getMessage()
+        ];
       }
     }
   }

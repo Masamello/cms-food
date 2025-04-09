@@ -5,7 +5,7 @@
 
   class User extends Model {
 
-    public function login($email, $password) {
+    public function login(string $email, string $password) {
       try {
         $sql = "SELECT UserId, CONCAT_WS(' ', FirstName, LastName) AS FullName, Password
                 FROM user_tb
@@ -46,8 +46,7 @@
       } catch(\Exception $e) {
         return [
           "success" => false, 
-          "error" => $e->getMessage(),
-          "message" => "Something went wrong while fetching your data. Please try again shortly."
+          "message" => $e->getMessage()
         ];
       } finally {
         $this->db->close();
@@ -75,8 +74,7 @@
       } catch(\Exception $e) {
         return [
           "success" => false, 
-          "error" => $e->getMessage(),
-          "message" => "Something went wrong while registering new user. Please try again shortly."
+          "message" => $e->getMessage()
         ];
       } finally {
         $this->db->close();
@@ -111,15 +109,14 @@
             } else {
               return [
                 "success" => false,
-                "message" => "User not found!"
+                "message" => "No user were updated."
               ];
             }
           } 
         } catch(\Exception $e) {
           return [
             "success" => false, 
-            "error" => $e->getMessage(),
-            "message" => "Something went wrong while updating user. Please try again shortly."
+            "message" => $e->getMessage()
           ];
         } finally {
           $this->db->close();
@@ -141,15 +138,14 @@
           } else {
             return [
               "success" => false,
-              "message" => "User not found or status is the same as requested!"
+              "message" => "No status user were updated."
             ];
           }
         }
       } catch(\Exception $e) {
         return [
           "success" => false, 
-          "error" => $e->getMessage(),
-          "message" => "Something went wrong while updating status user. Please try again shortly."
+          "message" => $e->getMessage()
         ];
       } finally {
         $this->db->close();
