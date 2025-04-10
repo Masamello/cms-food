@@ -19,9 +19,7 @@
     }
 
     public function registerUser(Request $request): Response {
-      $body = $request->getBody();
-      $data = json_decode($body, true);
-
+      $data = $request->getParsedBody();
       $newUser = $this->user->registerUser($data);
       return $this->jsonResponse($newUser);
     }

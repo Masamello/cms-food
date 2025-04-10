@@ -60,13 +60,23 @@
 
     public function registerUser($data) {
       try {
+        // Upload avatar
+        $avatarName =  time() . "." . basename($_FILES['avatar']['type']);
+        $targetDir = "uploads/".strtolower($avatarName);
+        if(!move_uploaded_file($_FILES['avatar']['tmp_name'], $targetDir)) {
+          throw new Exception("We are having some issues to complete your request, please try again sooner.", 500); 
+        } 
+
         $data['password'] = $this->createHashPassword($data['password']);
-        $sql = "INSERT INTO user_tb (FirstName, LastName, Password, Phone, Email, RoleId, Activate) 
-                VALUES ('$data[firstName]', '$data[lastName]', '$data[password]', '$data[phone]', '$data[email]', $data[roleId], 1)";
+        $sql = "INSERT INTO user_tb (FirstName, LastName, Password, Phone, Email, Avatar, RoleId, Activate) 
+                VALUES ('$data[firstName]', '$data[lastName]', '$data[password]', '$data[phone]', '$data[email]', '$avatarName', $data[roleId], 1)";
+
         if($this->db->query($sql)) {
+          // Audit
           $recordId = $this->db->insert_id;
           $audit = new Audit();
           $audit->logCreate($recordId, $data, "user_tb", "insert");
+
           return ["message" => "New user created successfully!", "status" => 200];
         }
       } catch(\Exception $e) {
