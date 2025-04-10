@@ -22,12 +22,7 @@
       $body = $request->getBody();
       $data = json_decode($body, true);
 
-      $newTable = $this->table->registerTable(
-        $data['tableNumber'],
-        $data['capacity'],
-        $data['location'],
-        $data['status'],
-      );
+      $newTable = $this->table->registerTable($data);
       return $this->jsonResponse($newTable);
     }
 
@@ -36,13 +31,7 @@
       $body = $request->getBody();
       $data = json_decode($body, true);
 
-      $updateTable = $this->table->updateTable(
-        $data['tableNumber'],
-        $data['capacity'],
-        $data['location'],
-        $data['status'],
-        $tableId
-      );
+      $updateTable = $this->table->updateTable($data, $tableId);
       return $this->jsonResponse($updateTable);
     }
 
@@ -51,7 +40,7 @@
       $body = $request->getBody();
       $data = json_decode($body, true);
 
-      $updateStatus = $this->table->updateTableStatus($data['status'], $tableId);
+      $updateStatus = $this->table->updateTableStatus($data, $tableId);
       return $this->jsonResponse($updateStatus);
     } 
 

@@ -1,6 +1,7 @@
 <?php 
   namespace App\Models;
 
+  use App\Utils\Audit;
   use App\Models\Model;
   use Exception;
 
@@ -57,19 +58,15 @@
       }
     }
 
-    public function registerUser(
-      string $firstName,
-      string $lastName,
-      string $password, 
-      string $phone,
-      string $email, 
-      int $roleId
-    ) {
+    public function registerUser($data) {
       try {
-        $password = $this->createHashPassword($password);
+        $data['password'] = $this->createHashPassword($data['password']);
         $sql = "INSERT INTO user_tb (FirstName, LastName, Password, Phone, Email, RoleId, Activate) 
-                VALUES ('$firstName', '$lastName', '$password', '$phone', '$email', $roleId, 1)";
+                VALUES ('$data[firstName]', '$data[lastName]', '$data[password]', '$data[phone]', '$data[email]', $data[roleId], 1)";
         if($this->db->query($sql)) {
+          $recordId = $this->db->insert_id;
+          $audit = new Audit();
+          $audit->logCreate($recordId, $data, "user_tb", "insert");
           return ["message" => "New user created successfully!", "status" => 200];
         }
       } catch(\Exception $e) {
@@ -79,27 +76,21 @@
       }
     }
 
-    public function updateUser(
-        string $firstName,
-        string $lastName,
-        string $password, 
-        string $phone,
-        string $email,
-        int $roleId,
-        int $userId,
-      ) {
+    public function updateUser($data, int $userId) {
         try {
-          $password = $this->createHashPassword($password);
+          $data['password'] = $this->createHashPassword($data['password']);
           $sql = "UPDATE user_tb 
-                  SET FirstName='$firstName', 
-                      LastName='$lastName', 
-                      Password='$password',
-                      Phone='$phone',
-                      Email='$email',
-                      RoleId=$roleId
+                  SET FirstName='$data[firstName]', 
+                      LastName='$data[lastName]', 
+                      Password='$data[password]',
+                      Phone='$data[phone]',
+                      Email='$data[email]',
+                      RoleId=$data[roleId]
                   WHERE UserId=$userId";
           if($this->db->query($sql)) {
             if($this->db->affected_rows > 0) {
+              $audit = new Audit();
+              $audit->logCreate($userId, $data, "user_tb", "update");
               return ["message" => "User updated successfully!", "status" => 200];
             } else {
               return ["message" => "No user were updated.", "status" => 200];
@@ -112,13 +103,15 @@
         }
     }
 
-    public function updateUserStatus(int $status, int $id) {
+    public function updateUserStatus($data, int $id) {
       try {
         $sql = "UPDATE user_tb
-                SET Activate=$status
+                SET Activate=$data[status]
                 WHERE UserId=$id";
         if($this->db->query($sql)) {
           if($this->db->affected_rows > 0) {
+            $audit = new Audit();
+              $audit->logCreate($id, $data, "user_tb", "update");
             return ["message" => "User status updated successfully!", "status" => 200];
           } else {
             return ["message" => "No status user were updated.", "status" => 200];

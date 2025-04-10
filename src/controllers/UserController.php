@@ -22,15 +22,7 @@
       $body = $request->getBody();
       $data = json_decode($body, true);
 
-      $newUser = $this->user->registerUser(
-        $data['firstName'],
-        $data['lastName'],
-        $data['password'],
-        $data['phone'],
-        $data['email'],
-        $data['roleId'],
-      );
-
+      $newUser = $this->user->registerUser($data);
       return $this->jsonResponse($newUser);
     }
 
@@ -39,16 +31,7 @@
       $body = $request->getBody();
       $data = json_decode($body, true);
 
-      $updateUser = $this->user->updateUser(
-        $data['firstName'],
-        $data['lastName'],
-        $data['password'],
-        $data['phone'],
-        $data['email'],
-        $data['roleId'],
-        $userId
-      );
-
+      $updateUser = $this->user->updateUser($data, $userId);
       return $this->jsonResponse($updateUser);
     }
     
@@ -57,7 +40,7 @@
       $body = $request->getBody();
       $data = json_decode($body, true);
 
-      $updateStatus = $this->user->updateUserStatus($data['status'], $userId);
+      $updateStatus = $this->user->updateUserStatus($data, $userId);
       return $this->jsonResponse($updateStatus);
     } 
   }
