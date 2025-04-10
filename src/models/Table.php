@@ -11,16 +11,13 @@
         if($result = $this->db->query($sql)) {
           $data = $result->fetch_all(MYSQLI_ASSOC);
           if(count($data) > 0) {
-            return ["success" => true, "data" => $data];
+            return ["data" => $data, "status" => 200];
           } else {
-            return ["success" => true, "data" => "No tables found"];
+            return ["data" => "No tables found", "status" => 200];
           }
         }
       } catch(\Exception $e) {
-        return [
-          "success" => false, 
-          "message" => "Something went wrong while fetching your data. Please try again shortly."
-        ];
+        return ["success" => false, "message" => $e->getMessage(), "status" => 500];
       } finally {
         $this->db->close();  
       }
@@ -37,16 +34,10 @@
                 VALUES ('$tableNumber', $capacity, '$location', '$status')";
         
         if($this->db->query($sql)) {
-          return [
-            "success" => true,
-            "message" => "New table created successfully!"
-          ];
+          return ["message" => "New table created successfully!", "status" => 200];
         }
       } catch(\Exception $e) {
-        return [
-          "success" => false, 
-          "message" => "Something went wrong while registering new table. Please try again shortly."
-        ];
+        return ["message" => $e->getMessage(),  "status" => 500];
       } finally {
         $this->db->close();
       }
@@ -68,22 +59,13 @@
                 WHERE TableId=$tableId";
         if($this->db->query($sql)) {
           if($this->db->affected_rows > 0) {
-            return [
-              "success" => true,
-              "message" => "Table updated successfully!"
-            ];
+            return ["message" => "Table updated successfully!", "status" => 200];
           } else {
-            return [
-              "success" => false,
-              "message" => "No table were updated."
-            ];
+            return ["message" => "No table were updated.", "status" => 500];
           }
         } 
       } catch(\Exception $e) {
-        return [
-          "success" => false, 
-          "message" => "Something went wrong while updating table. Please try again shortly."
-        ];
+        return ["message" => $e->getMessage(), "status" => 500];
       } finally {
         $this->db->close();
       }
@@ -97,22 +79,13 @@
 
         if($this->db->query($sql)) {
           if($this->db->affected_rows > 0) {
-            return [
-              "success" => true,
-              "message" => "Table status updated successfully!"
-            ];
+            return ["message" => "Table status updated successfully!", "status" => 200];
           } else {
-            return [
-              "success" => false,
-              "message" => "No table were updated."
-            ];
+            return ["message" => "No table were updated.", "status" => 200];
           }
         }
       } catch(\Exception $e) {
-        return [
-          "success" => false, 
-          "message" => "Something went wrong while updating status table. Please try again shortly."
-        ];
+        return ["message" => $e->getMessage(), "status" => 500];
       } finally {
         $this->db->close();
       }
@@ -123,22 +96,13 @@
         $sql = "DELETE FROM table_tb WHERE TableId=$tableId";
         if($this->db->query($sql)) {
           if($this->db->affected_rows > 0) {
-            return [
-              "success" => true,
-              "message" => "Table deleted successfully!"
-            ];
+            return ["message" => "Table deleted successfully!", "status" => 200];
           } else {
-            return [
-              "success" => false,
-              "message" => "No table were deleted."
-            ];
+            return ["message" => "No table were deleted.", "status" => 200];
           }
         }
       } catch(\Exception $e) {
-        return [
-          "success" => false, 
-          "message" => "Something went wrong while deleting table. Please try again shortly."
-        ];
+        return ["message" => $e->getMessage(), "status" => 500];
       } finally {
         $this->db->close();
       }

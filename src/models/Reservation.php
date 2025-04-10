@@ -16,16 +16,13 @@
         if($result = $this->db->query($sql)) {
           $data = $result->fetch_all(MYSQLI_ASSOC);
           if(count($data) > 0) {
-            return ["success" => true, "data" => $data];
+            return ["data" => $data, "status" => 200];
           } else {
-            return ["success" => true, "data" => "No reservations found"];
+            return ["data" => "No reservations found", "status" => 200];
           }
         }
       } catch(\Exception $e) {
-        return [
-          "success" => false, 
-          "message" => $e->getMessage()
-        ];
+        return ["message" => $e->getMessage(), "status" => 500];
       } finally {
         $this->db->close();  
       }
@@ -52,16 +49,10 @@
                 VALUES ($customerId, $tableId, '$startTime', '$endTime', $partySize, '$specialRequests', '$status')";        
 
         if($this->db->query($sql)) {
-          return [
-            "success" => true,
-            "message" => "New reservation created successfully!"
-          ];
+          return ["message" => "New reservation created successfully!", "status" => 200];
         } 
       } catch(\Exception $e) {
-        return [
-          "success" => false, 
-          "message" => $e->getMessage()
-        ];
+        return ["message" => $e->getMessage(), "status" => 500];
       } finally {
         $this->db->close();
       }
@@ -96,22 +87,13 @@
                 WHERE ReservationId=$reservationId";
         if($this->db->query($sql)) {
           if($this->db->affected_rows > 0) {
-            return [
-              "success" => true,
-              "message" => "Reservation updated successfully!"
-            ];
+            return ["message" => "Reservation updated successfully!", "status" => 200];
           } else {
-            return [
-              "success" => false,
-              "message" => "No reservation were updated."
-            ];
+            return ["message" => "No reservation were updated.", "status" => 200];
           }
         }
       } catch(\Exception $e) {
-        return [
-          "success" => false, 
-          "message" => $e->getMessage()
-        ];
+        return ["message" => $e->getMessage(), "status" => 500];
       } finally {
         $this->db->close();
       }
@@ -125,22 +107,13 @@
         
         if($this->db->query($sql)) {
           if($this->db->affected_rows > 0) {
-            return [
-              "success" => true,
-              "message" => "Reservation status updated successfully!"
-            ];
+            return ["message" => "Reservation status updated successfully!", "status" => 200];
           } else {
-            return [
-              "success" => false,
-              "message" => "No reservation status were updated."
-            ];
+            return ["message" => "No reservation status were updated.", "status" => 200];
           }
         }
       } catch(\Exception $e) {
-        return [
-          "success" => false, 
-          "message" => $e->getMessage()
-        ];
+        return ["message" => $e->getMessage(), "status" => 500];
       } finally {
         $this->db->close();
       }
@@ -164,7 +137,7 @@
         return true;
       } catch(\Exception $e) {
         return [
-          "success" => false, 
+          
           "message" => $e->getMessage()
         ];
       }

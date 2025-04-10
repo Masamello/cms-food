@@ -3,24 +3,22 @@
 
   use Psr\Http\Message\ResponseInterface as Response;
   use Psr\Http\Message\ServerRequestInterface as Request;
+  use App\Controllers\Controller;
   use App\Models\Reservation;
 
-  class ReservationController {
+  class ReservationController extends Controller {
     private $reservation;
 
     public function __construct() {
       $this->reservation = new Reservation();
     }
 
-    public function showReservations(Request $request, Response $response, array $args): Response {
+    public function showReservations(): Response {
       $reservations = $this->reservation->getAllReservations();
-      $statusCode = $reservations['success'] ? 200 : 500;
-      $payload = json_encode($reservations);
-      $response->getBody()->write($payload);
-      return $response->withHeader('Content-Type', 'application/json')->withStatus($statusCode);
+      return $this->jsonResponse($reservations);
     }
 
-    public function registerReservation(Request $request, Response $response, array $args): Response {
+    public function registerReservation(Request $request): Response {
       $body = $request->getBody();
       $data = json_decode($body, true);
 
@@ -33,11 +31,7 @@
         $data['status'],
         $data['specialRequests'],
       );
-
-      $statusCode = $reservation['success'] ? 200 : 500;
-      $payload = json_encode($reservation);
-      $response->getBody()->write($payload);
-      return $response->withHeader('Content-Type', 'application/json')->withStatus($statusCode);
+      return $this->jsonResponse($reservation);
     }
 
     public function updateReservation(Request $request, Response $response, array $args): Response {
@@ -55,11 +49,7 @@
         $data['specialRequests'],
         $reservationId
       );
-
-      $statusCode = $updateReservation['success'] ? 200 : 500;
-      $payload = json_encode($updateReservation);
-      $response->getBody()->write($payload);
-      return $response->withHeader('Content-Type', 'application/json')->withStatus($statusCode);
+      return $this->jsonResponse($updateReservation);
     }
 
     public function updateReservationStatus(Request $request, Response $response, array $args): Response {
@@ -68,11 +58,7 @@
       $data = json_decode($body, true);
 
       $updateStatus = $this->reservation->updateReservationStatus($data['status'], $reservationId);
-
-      $statusCode = $updateStatus['success'] ? 200 : 500;
-      $payload = json_encode($updateStatus);
-      $response->getBody()->write($payload);
-      return $response->withHeader('Content-Type', 'application/json')->withStatus($statusCode);
+      return $this->jsonResponse($updateStatus);
     }
   }
 

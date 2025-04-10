@@ -3,24 +3,22 @@
 
   use Psr\Http\Message\ResponseInterface as Response;
   use Psr\Http\Message\ServerRequestInterface as Request;
+  use App\Controllers\Controller;
   use App\Models\Table;
 
-  class TableController {
+  class TableController extends Controller {
     private $table;
 
     public function __construct() {
       $this->table = new Table();
     }
 
-    public function showTables(Request $request, Response $response, array $args): Response {
+    public function showTables(): Response {
       $tables = $this->table->getAllTables();
-      $statusCode = $tables['success'] ? 200 : 500;
-      $payload = json_encode($tables);
-      $response->getBody()->write($payload);
-      return $response->withHeader('Content-Type', 'application/json')->withStatus($statusCode);
+      return $this->jsonResponse($tables);
     }
 
-    public function registerTable(Request $request, Response $response, array $args): Response {
+    public function registerTable(Request $request): Response {
       $body = $request->getBody();
       $data = json_decode($body, true);
 
@@ -30,11 +28,7 @@
         $data['location'],
         $data['status'],
       );
-
-      $statusCode = $newTable['success'] ? 200 : 500;
-      $payload = json_encode($newTable);
-      $response->getBody()->write($payload);
-      return $response->withHeader('Content-Type', 'application/json')->withStatus($statusCode);
+      return $this->jsonResponse($newTable);
     }
 
     public function updateTable(Request $request, Response $response, array $args): Response {
@@ -49,11 +43,7 @@
         $data['status'],
         $tableId
       );
-
-      $statusCode = $updateTable['success'] ? 200 : 500;
-      $payload = json_encode($updateTable);
-      $response->getBody()->write($payload);
-      return $response->withHeader('Content-Type', 'application/json')->withStatus($statusCode);
+      return $this->jsonResponse($updateTable);
     }
 
     public function updateTableStatus(Request $request, Response $response, array $args): Response {
@@ -62,22 +52,14 @@
       $data = json_decode($body, true);
 
       $updateStatus = $this->table->updateTableStatus($data['status'], $tableId);
-
-      $statusCode = $updateStatus['success'] ? 200 : 500;
-      $payload = json_encode($updateStatus);
-      $response->getBody()->write($payload);
-      return $response->withHeader('Content-Type', 'application/json')->withStatus($statusCode);
+      return $this->jsonResponse($updateStatus);
     } 
 
     public function deleteTable(Request $request, Response $response, array $args): Response {
       $tableId = (int) $args['id'];
 
       $deleteStatus = $this->table->deleteTable(($tableId));
-
-      $statusCode = $deleteStatus['success'] ? 200 : 500;
-      $payload = json_encode($deleteStatus);
-      $response->getBody()->write($payload);
-      return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+      return $this->jsonResponse($deleteStatus);
     }
   }
 

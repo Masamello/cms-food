@@ -3,24 +3,22 @@
 
   use Psr\Http\Message\ResponseInterface as Response;
   use Psr\Http\Message\ServerRequestInterface as Request;
+  use App\Controllers\Controller;
   use App\Models\User;
 
-  class UserController {
+  class UserController extends Controller {
     private $user;
 
     public function __construct() {
       $this->user = new User();
     }
 
-    public function showUsers(Request $request, Response $response, array $args): Response {
+    public function showUsers(): Response {
       $users = $this->user->getAllUsers();
-      $statusCode = $users['success'] ? 200 : 500;
-      $payload = json_encode($users);
-      $response->getBody()->write($payload);
-      return $response->withHeader('Content-Type', 'application/json')->withStatus($statusCode);
+      return $this->jsonResponse($users);
     }
 
-    public function registerUser(Request $request, Response $response, array $args): Response {
+    public function registerUser(Request $request): Response {
       $body = $request->getBody();
       $data = json_decode($body, true);
 
@@ -33,10 +31,7 @@
         $data['roleId'],
       );
 
-      $statusCode = $newUser['success'] ? 200 : 500;
-      $payload = json_encode($newUser);
-      $response->getBody()->write($payload);
-      return $response->withHeader('Content-Type', 'application/json')->withStatus($statusCode);
+      return $this->jsonResponse($newUser);
     }
 
     public function updateUser(Request $request, Response $response, array $args): Response {
@@ -54,10 +49,7 @@
         $userId
       );
 
-      $statusCode = $updateUser['success'] ? 200 : 500;
-      $payload = json_encode($updateUser);
-      $response->getBody()->write($payload);
-      return $response->withHeader('Content-Type', 'application/json')->withStatus($statusCode);
+      return $this->jsonResponse($updateUser);
     }
     
     public function updateUserStatus(Request $request, Response $response, array $args): Response {
@@ -66,11 +58,7 @@
       $data = json_decode($body, true);
 
       $updateStatus = $this->user->updateUserStatus($data['status'], $userId);
-
-      $statusCode = $updateStatus['success'] ? 200 : 500;
-      $payload = json_encode($updateStatus);
-      $response->getBody()->write($payload);
-      return $response->withHeader('Content-Type', 'application/json')->withStatus($statusCode);
+      return $this->jsonResponse($updateStatus);
     } 
   }
 ?>

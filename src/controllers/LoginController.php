@@ -3,32 +3,28 @@
 
   use Psr\Http\Message\ResponseInterface as Response;
   use Psr\Http\Message\ServerRequestInterface as Request;
+  use App\Controllers\Controller;
   use App\Models\User;
 
-  class LoginController {
+  class LoginController extends Controller {
     private $user;
 
     public function __construct() {
       $this->user = new User();
     }
 
-    public function login(Request $request, Response $response, array $args): Response {
+    public function login(Request $request): Response {
       $body = $request->getBody();
       $data = json_decode($body, true);
 
       $login = $this->user->login($data['email'], $data['password']);
-
-      $payload = json_encode($login);
-      $response->getBody()->write($payload);
-      return $response->withHeader('Content-Type', 'application/json')->withStatus($login['status']);
+      return $this->jsonResponse($login);
     }
 
-    public function logout(Request $request, Response $response, array $args): Response {
+    public function logout(): Response {
       session_unset();
       session_destroy();
-      $payload = json_encode(["message" => "User session ended."]);
-      $response->getBody()->write($payload);
-      return $response->withHeader('Content-Type', 'application/json')->withStatus(302);
+      return $this->jsonResponse(["message" => "User session ended.", "status" => 302]);
     }
   }
 

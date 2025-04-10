@@ -18,7 +18,7 @@
               session_start();
             }
             $_SESSION['userInfo'] = $data;
-            return ["success" => true, "message" => "User authenticated.", "status" => 200];
+            return ["message" => "User authenticated.", "status" => 200];
           } else {
             throw new Exception("Login failed.", 405);
           }
@@ -26,11 +26,7 @@
           throw new Exception("Login failed.", 405);
         }
       } catch(\Exception $e) {
-        return [
-          "success" => false,
-          "message" => $e->getMessage(),
-          "status" => $e->getCode()
-        ];
+        return ["message" => $e->getMessage(), "status" => $e->getCode()];
       } finally {
         $this->db->close();
       }
@@ -45,15 +41,16 @@
         if($result = $this->db->query($sql)) {
           $data = $result->fetch_all(MYSQLI_ASSOC);
           if(count($data) > 0) {
-            return ["success" => true, "data" => $data];
+            return ["data" => $data, "status" => 200];
           } else {
-            return ["success" => true, "data" => "No users found"];
+            return ["data" => "No users found", "status" => 200];
           }
         }
       } catch(\Exception $e) {
         return [
-          "success" => false, 
-          "message" => $e->getMessage()
+          
+          "message" => $e->getMessage(),
+          "status" => 500
         ];
       } finally {
         $this->db->close();
@@ -73,16 +70,10 @@
         $sql = "INSERT INTO user_tb (FirstName, LastName, Password, Phone, Email, RoleId, Activate) 
                 VALUES ('$firstName', '$lastName', '$password', '$phone', '$email', $roleId, 1)";
         if($this->db->query($sql)) {
-          return [
-            "success" => true,
-            "message" => "New user created successfully!"
-          ];
+          return ["message" => "New user created successfully!", "status" => 200];
         }
       } catch(\Exception $e) {
-        return [
-          "success" => false, 
-          "message" => $e->getMessage()
-        ];
+        return ["message" => $e->getMessage(), "status" => 500];
       } finally {
         $this->db->close();
       }
@@ -109,22 +100,13 @@
                   WHERE UserId=$userId";
           if($this->db->query($sql)) {
             if($this->db->affected_rows > 0) {
-              return [
-                "success" => true,
-                "message" => "User updated successfully!"
-              ];
+              return ["message" => "User updated successfully!", "status" => 200];
             } else {
-              return [
-                "success" => false,
-                "message" => "No user were updated."
-              ];
+              return ["message" => "No user were updated.", "status" => 200];
             }
           } 
         } catch(\Exception $e) {
-          return [
-            "success" => false, 
-            "message" => $e->getMessage()
-          ];
+          return ["message" => $e->getMessage(), "status" => 500];
         } finally {
           $this->db->close();
         }
@@ -137,22 +119,13 @@
                 WHERE UserId=$id";
         if($this->db->query($sql)) {
           if($this->db->affected_rows > 0) {
-            return [
-              "success" => true,
-              "message" => "User status updated successfully!"
-            ];
+            return ["message" => "User status updated successfully!", "status" => 200];
           } else {
-            return [
-              "success" => false,
-              "message" => "No status user were updated."
-            ];
+            return ["message" => "No status user were updated.", "status" => 200];
           }
         }
       } catch(\Exception $e) {
-        return [
-          "success" => false, 
-          "message" => $e->getMessage()
-        ];
+        return ["message" => $e->getMessage(), "status" => 500];
       } finally {
         $this->db->close();
       }
