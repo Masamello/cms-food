@@ -1,105 +1,109 @@
 <?php
-  use Psr\Http\Message\ResponseInterface as Response;
-  use Psr\Http\Message\ServerRequestInterface as Request;
-  use Slim\Factory\AppFactory;
 
-  use App\Controllers\UserController;
-  
-  require __DIR__ . '/vendor/autoload.php';
-  
-  $app = AppFactory::create();
-  
-  $app->get('/', function (Request $request, Response $response, $args) {
-      $response->getBody()->write("Hello world!");
-      return $response;
-  });
+ini_set('display_errors', 1);
 
-  // User Routes
-  $app->get('/users', UserController::class . ':showUsers');
-  $app->post('/user/register', UserController::class . ':registerUser');
-  $app->put('/user/{id}', UserController::class . ':updateUser');
-  $app->patch('/user/status/{id}', UserController::class . ':updateUserStatus');
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
+use Slim\Factory\AppFactory;
 
-  // Table Routes
-  
-  $app->run();
+use App\controllers\UserController;
+use App\Models\Roles;
 
-  // use App\Models\Reservation;
-  // use App\Models\Roles;
+require __DIR__ . '/vendor/autoload.php';
+// 
+$app = AppFactory::create();
 
-  // require "./models/Reservation.php";
-  // require "./models/Roles.php";
-  // require "./enums/TableStatus.php";
-  // require "./enums/ReservationStatus.php";
+$app->get('/', function (Request $request, Response $response, $args) {
+  $response->getBody()->write("Hello world!");
+  return $response;
+});
 
-  // session_start();
+// User Routes
+$app->get('/users', UserController::class . ':showUsers');
+$app->post('/user/register', UserController::class . ':registerUser');
+$app->put('/user/{id}', UserController::class . ':updateUser');
+$app->patch('/user/status/{id}', UserController::class . ':updateUserStatus');
 
-  // echo $_SESSION['userFullName'];
+// Table Routes
+$role = new Roles();
+$role->addRole("test");
+$app->run();
 
-  // $role = new Roles();
+// use App\Models\Reservation;
+// use App\Models\Roles;
 
-  // $reservation = new Reservation;
+// require "./models/Reservation.php";
+// require "./models/Roles.php";
+// require "./enums/TableStatus.php";
+// require "./enums/ReservationStatus.php";
 
-  // $reservation->getAllReservations();
+// session_start();
 
-  // $data = [
-  //   "customerId" => 12,
-  //   "tableId" => 1,
-  //   "startTime" => "2025-04-07 08:00:00",
-  //   "endTime" => "2025-04-07 09:00:00",
-  //   "partySize" => 6,
-  //   "specialRequests" => "No spicy food and only vegetables.",
-  //   "status" => ReservationStatus::Confirmed->value
-  // ];
+// echo $_SESSION['userFullName'];
 
-  // $reservation->addReservation(
-  //   $data['customerId'],
-  //   $data['tableId'],
-  //   $data['startTime'],
-  //   $data['endTime'],
-  //   $data['partySize'],
-  //   $data['status'],
-  //   $data['specialRequests'],
-  // );
 
-  // $reservation->updateReservation(
-  //   $data['customerId'],
-  //   $data['tableId'],
-  //   $data['startTime'],
-  //   $data['endTime'],
-  //   $data['partySize'],
-  //   $data['status'],
-  //   $data['specialRequests'],
-  //   7
-  // );
 
-  // $reservation->updateReservationStatus(ReservationStatus::Cancelled->value, 7);
+// $reservation = new Reservation;
 
-  // $table = new Table;
-  
-  // $table->getAllTables();
+// $reservation->getAllReservations();
 
-  // $data = [
-  //   "tableNumber" => "C5",
-  //   "capacity" => 8,
-  //   "location" => "Deck",
-  //   "status" => TableStatus::OutOfService->value,
-  // ];
+// $data = [
+//   "customerId" => 12,
+//   "tableId" => 1,
+//   "startTime" => "2025-04-07 08:00:00",
+//   "endTime" => "2025-04-07 09:00:00",
+//   "partySize" => 6,
+//   "specialRequests" => "No spicy food and only vegetables.",
+//   "status" => ReservationStatus::Confirmed->value
+// ];
 
-  // $table->addTable(
-  //   $data['tableNumber'], 
-  //   $data['capacity'], 
-  //   $data['location'], 
-  //   $data['status']
-  // );
+// $reservation->addReservation(
+//   $data['customerId'],
+//   $data['tableId'],
+//   $data['startTime'],
+//   $data['endTime'],
+//   $data['partySize'],
+//   $data['status'],
+//   $data['specialRequests'],
+// );
 
-  // $table->updateTable(
-  //   $data['tableNumber'], 
-  //   $data['capacity'], 
-  //   $data['location'], 
-  //   $data['status'],
-  //   5
-  // );
+// $reservation->updateReservation(
+//   $data['customerId'],
+//   $data['tableId'],
+//   $data['startTime'],
+//   $data['endTime'],
+//   $data['partySize'],
+//   $data['status'],
+//   $data['specialRequests'],
+//   7
+// );
 
-  // $table->deleteTable(2);
-?>
+// $reservation->updateReservationStatus(ReservationStatus::Cancelled->value, 7);
+
+// $table = new Table;
+
+// $table->getAllTables();
+
+// $data = [
+//   "tableNumber" => "C5",
+//   "capacity" => 8,
+//   "location" => "Deck",
+//   "status" => TableStatus::OutOfService->value,
+// ];
+
+// $table->addTable(
+//   $data['tableNumber'], 
+//   $data['capacity'], 
+//   $data['location'], 
+//   $data['status']
+// );
+
+// $table->updateTable(
+//   $data['tableNumber'], 
+//   $data['capacity'], 
+//   $data['location'], 
+//   $data['status'],
+//   5
+// );
+
+// $table->deleteTable(2);

@@ -1,16 +1,47 @@
-<?php 
-  require_once "Model.php";
+<?php
 
-  class Roles extends Model {
+namespace App\Models;
 
-    /**
-     * Function to create a new role
-     */
-    public function addRole() {}
+use App\Models\Model;
+use App\Config\Database;
 
-    /**
-     * Function to update a role, it's just necessary to update the name of the rule.
-     */
-    public function updateRole() {}
+class Roles extends Model
+{
+
+  /**
+   * Function to create a new role
+   */
+
+  public function addRole($roleName)
+  {
+    try {
+      $sql = "INSERT INTO roles_tb (name)
+                VALUES ('$roleName')";
+      if ($this->db->query($sql)) {
+        return [
+          "success" => true,
+          "message" => "New role created successfully!"
+        ];
+      }
+    } catch (\Exception $e) {
+      return [
+        "success" => false,
+        "message" => $e->getMessage()
+      ];
+    } finally {
+      $this->db->close();
+    }
   }
-?>
+
+  /**
+   * Function to update a role, it's just necessary to update the name of the rule.
+   */
+  public function updateRole($roleId, $roleName)
+  {
+    $array = ["success" => true, "message" => "the role were updated"];
+    echo $array["success"];
+    try {
+    } catch (\Exception $e) {
+    }
+  }
+}
