@@ -10,7 +10,7 @@
       try {
         $sql = "SELECT UserId, CONCAT_WS(' ', FirstName, LastName) AS FullName, Password
                 FROM user_tb
-                WHERE Email='$email'";
+                WHERE Email='$email' AND Activate = 1";
         if($result = $this->db->query($sql)) {
           $data = $result->fetch_assoc();
           if($data && password_verify($password, $data['Password'])) {
