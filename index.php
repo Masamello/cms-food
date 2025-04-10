@@ -8,6 +8,7 @@
   use App\Controllers\UserController;
   use App\Controllers\ReservationController;
   use App\Controllers\TableController;
+  use App\Controllers\RoleController;
   
   require __DIR__ . '/vendor/autoload.php';
   
@@ -47,5 +48,10 @@
   $app->put('/reservation/{id}', ReservationController::class . ':updateReservation')->add($authMiddleware);
   $app->patch('/reservation/status/{id}', ReservationController::class . ':updateReservationStatus')->add($authMiddleware);
   
+  // Role Routes
+  $app->get('/roles', RoleController::class . ':showRoles')->add($authMiddleware);
+  $app->post('/role/register', RoleController::class . ':registerRole')->add($authMiddleware);
+  $app->put('/role/{id}', RoleController::class . ':updateRole')->add($authMiddleware);
+
   $app->run();
 ?>

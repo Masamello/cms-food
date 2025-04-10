@@ -34,7 +34,7 @@
 
     public function getAllUsers() {
       try {
-        $sql = "SELECT u.userId, u.FirstName, u.LastName, u.Phone, u.Email, u.Activate, r.name AS Role
+        $sql = "SELECT u.userId, u.FirstName, u.LastName, u.Phone, u.Email, u.Activate, r.RoleName
                 FROM user_tb AS u 
                 INNER JOIN roles_tb AS r
                 WHERE r.RoleId = u.RoleId";
