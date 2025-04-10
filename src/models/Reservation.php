@@ -1,6 +1,7 @@
 <?php 
   namespace App\Models;
 
+  use App\Utils\Audit;
   use App\Models\Model;
   class Reservation extends Model {
     
@@ -28,27 +29,15 @@
       }
     }
 
-    public function registerReservation(
-      int $customerId,
-      int $tableId,
-      string $startTime,
-      string $endTime,
-      int $partySize,
-      string $status,
-      string $specialRequests = "No requests",
-    ) {
+    public function registerReservation($data) {
       try {
-        /**
-         * TODO: 
-         * 1 - check if there is a reservation with same date/hour and status is not confirmed/pending.
-         * 2 - check if the table selected have sufficient seats available.
-         *  */ 
-        // $isReservationAvailable = $this->checkReservation($startTime, $endTime, $partySize, $tableId);
-
         $sql = "INSERT INTO reservation_tb (CustomerId, TableId, StartTime, EndTime, PartySize, SpecialRequests, Status)
-                VALUES ($customerId, $tableId, '$startTime', '$endTime', $partySize, '$specialRequests', '$status')";        
+                VALUES ($data[customerId], $data[tableId], '$data[startTime]', '$data[endTime]', $data[partySize], '$data[specialRequests]', '$data[status]')";        
 
         if($this->db->query($sql)) {
+          $recordId = $this->db->insert_id;
+          $audit = new Audit();
+          $audit->logCreate($recordId, $data, "reservation_tb", "insert");
           return ["message" => "New reservation created successfully!", "status" => 200];
         } 
       } catch(\Exception $e) {
@@ -58,35 +47,21 @@
       }
     }
 
-    public function updateReservation(
-      int $customerId,
-      int $tableId,
-      string $startTime,
-      string $endTime,
-      int $partySize,
-      string $status,
-      string $specialRequests = "No requests",
-      int $reservationId
-    ) {
+    public function updateReservation($data, int $reservationId) {
       try {
-        /**
-         * TODO: 
-         * 1 - check if there is a reservation with same date/hour and status is not confirmed/pending.
-         * 2 - check if the table selected have sufficient seats available.
-         *  */ 
-        // $reservation = $this->checkReservation($startTime, $endTime, $partySize, $tableId);
-
         $sql = "UPDATE reservation_tb
-                SET CustomerId=$customerId, 
-                    TableId=$tableId, 
-                    StartTime='$startTime',
-                    EndTime='$endTime',
-                    PartySize='$partySize',
-                    Status='$status',
-                    SpecialRequests='$specialRequests'
+                SET CustomerId=$data[customerId], 
+                    TableId=$data[tableId], 
+                    StartTime='$data[startTime]',
+                    EndTime='$data[endTime]',
+                    PartySize='$data[partySize]',
+                    Status='$data[status]',
+                    SpecialRequests='$data[specialRequests]'
                 WHERE ReservationId=$reservationId";
         if($this->db->query($sql)) {
           if($this->db->affected_rows > 0) {
+            $audit = new Audit();
+            $audit->logCreate($reservationId, $data, "reservation_tb", "update");
             return ["message" => "Reservation updated successfully!", "status" => 200];
           } else {
             return ["message" => "No reservation were updated.", "status" => 200];
@@ -99,14 +74,16 @@
       }
     }
 
-    public function updateReservationStatus(string $status, int $reservationId) {
+    public function updateReservationStatus($data, int $reservationId) {
       try {
         $sql = "UPDATE reservation_tb
-                SET Status='$status'
+                SET Status='$data[status]'
                 WHERE ReservationId=$reservationId";
         
         if($this->db->query($sql)) {
           if($this->db->affected_rows > 0) {
+            $audit = new Audit();
+            $audit->logCreate($reservationId, $data, "reservation_tb", "update");
             return ["message" => "Reservation status updated successfully!", "status" => 200];
           } else {
             return ["message" => "No reservation status were updated.", "status" => 200];
@@ -118,30 +95,5 @@
         $this->db->close();
       }
     }
-
-    private function checkReservation($startTime, $endTime, $partySize, $tableId) {
-      try {
-        $sql = "SELECT date 
-                FROM reservation_tb 
-                WHERE (startTime < '$startTime' AND endTime > '$endTime') AND TableId=$tableId";
-        if($result = $this->db->query($sql)) {
-          $data = $result->fetch_all(MYSQLI_ASSOC);
-          if(count($data) > 0) {
-            echo "Reservation is not available";
-            return false;
-          } else {
-            echo "Reservation is available";
-            return true;
-          } 
-        }
-        return true;
-      } catch(\Exception $e) {
-        return [
-          
-          "message" => $e->getMessage()
-        ];
-      }
-    }
   }
-
 ?>

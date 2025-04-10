@@ -22,15 +22,7 @@
       $body = $request->getBody();
       $data = json_decode($body, true);
 
-      $reservation = $this->reservation->registerReservation(
-        $data['customerId'],
-        $data['tableId'],
-        $data['startTime'],
-        $data['endTime'],
-        $data['partySize'],
-        $data['status'],
-        $data['specialRequests'],
-      );
+      $reservation = $this->reservation->registerReservation($data);
       return $this->jsonResponse($reservation);
     }
 
@@ -39,16 +31,7 @@
       $body = $request->getBody();
       $data = json_decode($body, true);
 
-      $updateReservation = $this->reservation->updateReservation(
-        $data['customerId'],
-        $data['tableId'],
-        $data['startTime'],
-        $data['endTime'],
-        $data['partySize'],
-        $data['status'],
-        $data['specialRequests'],
-        $reservationId
-      );
+      $updateReservation = $this->reservation->updateReservation($data, $reservationId);
       return $this->jsonResponse($updateReservation);
     }
 
@@ -57,7 +40,7 @@
       $body = $request->getBody();
       $data = json_decode($body, true);
 
-      $updateStatus = $this->reservation->updateReservationStatus($data['status'], $reservationId);
+      $updateStatus = $this->reservation->updateReservationStatus($data, $reservationId);
       return $this->jsonResponse($updateStatus);
     }
   }
