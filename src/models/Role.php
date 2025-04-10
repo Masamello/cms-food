@@ -24,6 +24,25 @@
       }
     }
 
+    public function getRoleById(int $roleId) {
+      try {
+        $sql = "SELECT RoleName FROM roles_tb WHERE RoleId=$roleId";
+        
+        if($result = $this->db->query($sql)) {
+          $data = $result->fetch_all(MYSQLI_ASSOC);
+          if(count($data) > 0) {
+            return ["data" => $data, "status" => 200];
+          } else {
+            return ["data" => "No role found", "status" => 200];
+          }
+        }
+      } catch(\Exception $e) {
+        return ["success" => false, "message" => $e->getMessage(), "status" => 500];
+      } finally {
+        $this->db->close();  
+      }
+    }
+
     public function registerRole($roleName) {
      try {
        $sql = "INSERT INTO roles_tb (RoleName)

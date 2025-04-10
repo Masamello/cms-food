@@ -18,6 +18,12 @@
       return $this->jsonResponse($roles);
     }
 
+    public function getRoleById(Request $request, Response $response, array $args): Response {
+      $roleId = $args['id'];
+      $role = $this->role->getRoleById($roleId);
+      return $this->jsonResponse($role);
+    }
+
     public function registerRole(Request $request): Response {
       $body = $request->getBody();
       $data = json_decode($body, true);

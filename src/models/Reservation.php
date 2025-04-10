@@ -29,6 +29,31 @@
       }
     }
 
+    public function getReservationById(int $reservationId) {
+      try {
+        $sql = "SELECT r.ReservationId, u.FirstName, u.LastName, t.TableNumber, t.Location, r.PartySize, r.SpecialRequests, r.Status
+                FROM reservation_tb AS r
+                INNER JOIN user_tb AS u
+                ON u.UserId = r.CustomerId
+                INNER JOIN table_tb AS t
+                ON t.TableId = r.TableId
+                WHERE r.ReservationId=$reservationId";
+
+        if($result = $this->db->query($sql)) {
+          $data = $result->fetch_all(MYSQLI_ASSOC);
+          if(count($data) > 0) {
+            return ["data" => $data, "status" => 200];
+          } else {
+            return ["data" => "No reservation found", "status" => 200];
+          }
+        }
+      } catch(\Exception $e) {
+        return ["message" => $e->getMessage(), "status" => 500];
+      } finally {
+        $this->db->close();  
+      }
+    }
+
     public function registerReservation($data) {
       try {
         $sql = "INSERT INTO reservation_tb (CustomerId, TableId, StartTime, EndTime, PartySize, SpecialRequests, Status)

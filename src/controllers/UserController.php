@@ -24,6 +24,12 @@
       return $this->jsonResponse($newUser);
     }
 
+    public function getUserById(Request $request, Response $response, array $args): Response {
+      $userId = $args['id'];
+      $user = $this->user->getUserById($userId);
+      return $this->jsonResponse($user);
+    }
+
     public function updateUser(Request $request, Response $response, array $args): Response {
       $userId = $args['id'];
       $body = $request->getBody();

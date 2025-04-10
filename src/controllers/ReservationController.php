@@ -18,6 +18,12 @@
       return $this->jsonResponse($reservations);
     }
 
+    public function getReservationById(Request $request, Response $response, array $args): Response {
+      $reservationId = $args['id'];
+      $reservation = $this->reservation->getReservationById($reservationId);
+      return $this->jsonResponse($reservation);
+    }
+
     public function registerReservation(Request $request): Response {
       $body = $request->getBody();
       $data = json_decode($body, true);

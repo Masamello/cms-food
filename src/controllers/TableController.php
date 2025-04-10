@@ -26,6 +26,12 @@
       return $this->jsonResponse($newTable);
     }
 
+    public function getTableById(Request $request, Response $response, array $args): Response {
+      $tableId = $args['id'];
+      $table = $this->table->getTableById($tableId);
+      return $this->jsonResponse($table);
+    }
+
     public function updateTable(Request $request, Response $response, array $args): Response {
       $tableId = $args['id'];
       $body = $request->getBody();

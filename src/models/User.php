@@ -48,11 +48,7 @@
           }
         }
       } catch(\Exception $e) {
-        return [
-          
-          "message" => $e->getMessage(),
-          "status" => 500
-        ];
+        return ["message" => $e->getMessage(), "status" => 500];
       } finally {
         $this->db->close();
       }
@@ -82,6 +78,27 @@
           return ["message" => "New user created successfully!", "status" => 200];
         } else {
           throw new Exception("Error while creating the user, please try again sooner", 500);
+        }
+      } catch(\Exception $e) {
+        return ["message" => $e->getMessage(), "status" => 500];
+      } finally {
+        $this->db->close();
+      }
+    }
+
+    public function getUserById(int $userId) {
+      try {
+        $sql = "SELECT u.FirstName, u.LastName, u.Phone, u.Email, u.Activate, r.RoleName
+                FROM user_tb AS u 
+                INNER JOIN roles_tb AS r
+                WHERE r.RoleId = u.RoleId AND u.userId = $userId";
+        if($result = $this->db->query($sql)) {
+          $data = $result->fetch_all(MYSQLI_ASSOC);
+          if(count($data) > 0) {
+            return ["data" => $data, "status" => 200];
+          } else {
+            return ["data" => "No user found", "status" => 200];
+          }
         }
       } catch(\Exception $e) {
         return ["message" => $e->getMessage(), "status" => 500];

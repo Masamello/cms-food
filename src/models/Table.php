@@ -42,6 +42,27 @@
       }
     }
 
+    public function getTableById(int $tableId) {
+      try {
+        $sql = "SELECT TableNumber, Capacity, Location, Status 
+                FROM table_tb
+                WHERE TableId=$tableId";
+        
+        if($result = $this->db->query($sql)) {
+          $data = $result->fetch_all(MYSQLI_ASSOC);
+          if(count($data) > 0) {
+            return ["data" => $data, "status" => 200];
+          } else {
+            return ["data" => "No table found", "status" => 200];
+          }
+        }
+      } catch(\Exception $e) {
+        return ["success" => false, "message" => $e->getMessage(), "status" => 500];
+      } finally {
+        $this->db->close();  
+      }
+    }
+
     public function updateTable($data, int $tableId) {
       try {
         $sql = "UPDATE table_tb
