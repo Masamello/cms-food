@@ -68,16 +68,20 @@
         } 
 
         $data['password'] = $this->createHashPassword($data['password']);
-        $sql = "INSERT INTO user_tb (FirstName, LastName, Password, Phone, Email, Avatar, RoleId, Activate) 
-                VALUES ('$data[firstName]', '$data[lastName]', '$data[password]', '$data[phone]', '$data[email]', '$avatarName', $data[roleId], 1)";
-
-        if($this->db->query($sql)) {
+        $data['avatar'] = $avatarName;
+        $data['activate'] = 1;
+        $stmt = $this->db->prepare("INSERT INTO user_tb (FirstName, LastName, Password, Phone, Email, Avatar, RoleId, Activate) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssssssii", $data['firstName'], $data['lastName'], $data['password'], $data['phone'], $data['email'], $data['avatar'], $data['roleId'], $data['activate']);
+        
+        if($stmt->execute()) {
           // Audit
           $recordId = $this->db->insert_id;
           $audit = new Audit();
           $audit->logCreate($recordId, $data, "user_tb", "insert");
 
           return ["message" => "New user created successfully!", "status" => 200];
+        } else {
+          throw new Exception("Error while creating the user, please try again sooner", 500);
         }
       } catch(\Exception $e) {
         return ["message" => $e->getMessage(), "status" => 500];
