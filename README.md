@@ -66,6 +66,7 @@ The CMS was developed as part of a final project for a college-level PHP course 
 
 -   **PHP**
 -   **MySQL**
+-   **Slim Framework**
 
 ---
 
